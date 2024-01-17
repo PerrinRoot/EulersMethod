@@ -13,9 +13,12 @@ def euler_method(func, y_initial, x_initial, x_final, h):
 
 def process_math_functions(ode_str):
     math_functions = ['sin', 'cos', 'tan', 'exp', 'log', 'sqrt']
+
     for func in math_functions:
         if func in ode_str:
             ode_str = ode_str.replace(func, f"np.{func}")
+    ode_str = ode_str.replace('^', '**')        
+    ode_str = f"({ode_str})"
 
     return ode_str
 
@@ -26,36 +29,42 @@ def validate_input(x_initial, x_final, h):
         raise ValueError("Invalid input: x final should be greater than x initial.")
 
 def main():
-    try:
-        ode_str = input("Enter dy/dx (e.g. x + y): ")
-        ode_str = process_math_functions(ode_str)
-        ode_func = eval(f"lambda x, y: {ode_str}")  
+    while True:
+        try:
+            ode_str = input("Enter dy/dx (e.g. x + y) or type 'exit' to quit: ")
 
-        x_initial = float(input("Enter x initial: "))
-        x_final = float(input("Enter x final: "))
-        y_initial = float(input("Enter the initial value of y: "))
-        h = float(input("Enter the step size: "))
+            if ode_str.lower() in ['exit', 'quit']:
+                print("Exiting the program.")
+                break
 
-        validate_input(x_initial, x_final, h)
+            ode_str = process_math_functions(ode_str)
 
-        x_values, y_values = euler_method(ode_func, y_initial, x_initial, x_final, h)
-        y_values = [y - y_values[0] for y in y_values]
+            ode_func = eval(f"lambda x, y: {ode_str}")
 
-  
-        plt.plot(x_values, y_values, label='Numerical Solution')
-        plt.title('Numerical Solution using Numerical Method')
-        plt.xlabel('x')
-        plt.ylabel('f(x)')
-        plt.legend()
-        plt.grid(True)
-        plt.show()
+            x_initial = float(input("Enter x initial: "))
+            x_final = float(input("Enter x final: "))
+            y_initial = float(input("Enter the initial value of y: "))
+            h = float(input("Enter the step size: "))
 
-    except ValueError as ve:
-        print(f"ValueError: {ve}")
-        print("Check imput and try again")
-    except Exception as e:
-        print(f"Error: {e}")
-        print("An unexpected error occurred. Please try again.")
+            validate_input(x_initial, x_final, h)
+
+            x_values, y_values = euler_method(ode_func, y_initial, x_initial, x_final, h)
+            y_values = [y - y_values[0] for y in y_values]
+
+            plt.plot(x_values, y_values, label='Numerical Solution')
+            plt.title('Numerical Solution using Numerical Method')
+            plt.xlabel('x')
+            plt.ylabel('f(x)')
+            plt.legend()
+            plt.grid(True)
+            plt.show()
+
+        except ValueError as ve:
+            print(f"ValueError: {ve}")
+            print("Check input and try again.")
+        except Exception as e:
+            print(f"Error: {e}")
+            print("An unexpected error occurred. Please try again.")
 
 if __name__ == "__main__":
     main()
