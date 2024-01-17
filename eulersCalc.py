@@ -13,7 +13,6 @@ def euler_method(func, y_initial, x_initial, x_final, h):
 
 def process_math_functions(ode_str):
     math_functions = ['sin', 'cos', 'tan', 'exp', 'log', 'sqrt']
-
     for func in math_functions:
         if func in ode_str:
             ode_str = ode_str.replace(func, f"np.{func}")
@@ -29,9 +28,7 @@ def validate_input(x_initial, x_final, h):
 def main():
     try:
         ode_str = input("Enter dy/dx (e.g. x + y): ")
-
         ode_str = process_math_functions(ode_str)
-
         ode_func = eval(f"lambda x, y: {ode_str}")  
 
         x_initial = float(input("Enter x initial: "))
